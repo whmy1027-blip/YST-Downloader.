@@ -1,0 +1,52 @@
+name: 🚀 Build YST Downloader APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    name: 📱 Build Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flet
+        pip install yt-dlp
+        
+    - name: 🏗️ Build YST Downloader APK
+      run: |
+        flet build apk \
+          --name "YST Downloader" \
+          --build-version "1.0.0" \
+          --build-number ${{ github.run_number }} \
+          --bundle-id "com.yst.downloader" \
+          --verbose
+          
+    - name: 📱 Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: yst-downloader-apk
+        path: build/apk/**/*.apk
+        retention-days: 30
+        
+    - name: 🎉 Notify Success
+      run: |
+        echo "✅ YST Downloader APK built successfully!"
+        echo "📱 App: YST Downloader"
+        echo "🔢 Version: 1.0.0"
+        echo "🔢 Build: ${{ github.run_number }}"
+        echo "📦 Download from Artifacts section"
