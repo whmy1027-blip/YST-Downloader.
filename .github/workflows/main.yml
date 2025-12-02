@@ -1,28 +1,19 @@
-name: 🚀 Build APK
+name: Flet APK
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+on: [push, workflow_dispatch]
 
 jobs:
-  build-apk:
-    name: 📱 Build APK
+  build:
     runs-on: ubuntu-latest
     
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
-      
-    - name: 🐍 Set up Python
-      uses: actions/setup-python@v4
+    - uses: actions/checkout@v4
+    - run: pip install flet
+    - run: flet build apk
+    - uses: actions/upload-artifact@v4
       with:
-        python-version: '3.9'
-        
-    - name: 📦 Install dependencies
-      run: |
-        pip install flet
-        
-    - name: 🏗️ Build APK
-      run: |
-        flet build apk
+        name: yst-apk
+        path: build/apk/**/*.apk
+    - run: |
+        echo "✅ APK Built Successfully!"
+        echo "⬇️ Download from Artifacts section"
